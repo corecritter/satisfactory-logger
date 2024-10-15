@@ -60,7 +60,7 @@ public class LogFileActionHandler : ILogFileActionHandler
         }
         else
         {
-            var existing = this.loggedInUsers.SingleOrDefault(_ => _.IpAddress == logFileParserResult.IpAddress);
+            var existing = this.loggedInUsers.Where(_ => _.IpAddress == logFileParserResult.IpAddress).ToList();
 
             if (existing == default)
             {
@@ -68,9 +68,16 @@ public class LogFileActionHandler : ILogFileActionHandler
                 return default;
             }
 
-            this.loggedInUsers.Remove(existing);
+            foreach (var existingUser in existing)
+            {
+                this.loggedInUsers.Remove(existingUser);
+            }
 
-            return $"User {existing.Username} with IP {existing.IpAddress} is logging out after {logFileParserResult.TimeStamp - existing.LoginTime}";
+            var validExisting = existing.FirstOrDefault(_ => _.Username != default);
+            if (validExisting != default)
+            {
+                return $"User {validExisting.Username} with IP {validExisting.IpAddress} is logging out after {logFileParserResult.TimeStamp - validExisting.LoginTime}";
+            }
         }
 
         return default;
