@@ -46,7 +46,7 @@ public class LogFileParser : ILogFileParser
     {
         try
         {
-            using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             var buffer = new byte[Array.MaxLength];
             var readLength = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
