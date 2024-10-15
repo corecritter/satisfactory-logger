@@ -32,29 +32,28 @@ public class LogFileActionHandler : ILogFileActionHandler
                     Username = logFileParserResult.Username!
                 };
                 this.loggedInUsers.Add(existing);
+                existing.LoginTime = logFileParserResult.TimeStamp;
+                this.lastAssignedUserName = existing;
+                return $"User: {existing.Username} has logged in.";
             }
-            existing.LoginTime = logFileParserResult.TimeStamp;
-            this.lastAssignedUserName = existing;
-            return $"User: {existing.Username} has logged in.";
         }
         else if (logFileParserResult.Action == LogFileParserResult.Types.Action.LoginIp)
         {
             var existing = this.lastAssignedUserName;
             if (existing == default)
             {
-                this.logger.LogWarning("Ip Address being added without username");
                 existing = this.loggedInUsers.FirstOrDefault(_ => _.IpAddress == logFileParserResult.IpAddress);
-
                 if (existing == default)
                 {
+                    this.logger.LogWarning("Ip Address being added without username");
                     existing = new LoggedInUser
                     {
-                        IpAddress = logFileParserResult.IpAddress
+                        IpAddress = logFileParserResult.IpAddress,
+                        LoginTime = logFileParserResult.TimeStamp
                     };
                     this.loggedInUsers.Add(existing);
+                    return $"User with IP: {existing.IpAddress} has logged in.";
                 }
-
-                return $"User with IP: {existing.IpAddress} has logged in.";
             }
             existing.IpAddress = logFileParserResult.IpAddress;
             this.lastAssignedUserName = default;
