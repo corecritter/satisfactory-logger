@@ -9,6 +9,7 @@ public class AppSettings
 public class FileOptions
 {
     public string SatisfactoryLogDirectory { get; set; } = null!;
+    public TimeSpan MaxLogAge { get; set; }
 }
 
 public class DiscordOptions

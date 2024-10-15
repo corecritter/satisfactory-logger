@@ -31,6 +31,7 @@ public class LogFileActionHandler : ILogFileActionHandler
                 {
                     Username = logFileParserResult.Username!
                 };
+                this.loggedInUsers.Add(existing);
             }
             existing.LoginTime = logFileParserResult.TimeStamp;
             this.lastAssignedUserName = existing;
@@ -70,7 +71,7 @@ public class LogFileActionHandler : ILogFileActionHandler
 
             this.loggedInUsers.Remove(existing);
 
-            return $"User {existing.Username} is logging out after {logFileParserResult.TimeStamp - existing.LoginTime}";
+            return $"User {existing.Username} with IP {existing.IpAddress} is logging out after {logFileParserResult.TimeStamp - existing.LoginTime}";
         }
 
         return default;

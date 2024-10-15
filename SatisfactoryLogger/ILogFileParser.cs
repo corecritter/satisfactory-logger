@@ -11,7 +11,7 @@ namespace SatisfactoryLogger;
 
 public interface ILogFileParser
 {
-    public Task<List<LogFileParserResult>> ParseFile(string fileName, CancellationToken cancellationToken);
+    public Task<List<LogFileParserResult>> ParseFile(string fileName, DateTime currentTime, TimeSpan maxLogEntryAge, CancellationToken cancellationToken);
 }
 
 public class LogFileParser : ILogFileParser
@@ -34,11 +34,11 @@ public class LogFileParser : ILogFileParser
 
     private const string TimeStampFormat = "yyyy.MM.dd-HH.mm.ss:fff";
 
-    public async Task<List<LogFileParserResult>> ParseFile(string fileName, CancellationToken cancellationToken)
+    public async Task<List<LogFileParserResult>> ParseFile(string fileName, DateTime currentTime, TimeSpan maxLogEntryAge, CancellationToken cancellationToken)
     {
         using var stream = new FileStream(fileName, FileMode.Open);
 
-        var buffer = new byte[int.MaxValue];
+        var buffer = new byte[Array.MaxLength];
         var readLength = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
 
         var destArray = new byte[readLength];
@@ -47,12 +47,12 @@ public class LogFileParser : ILogFileParser
         var contents = UTF8Encoding.UTF8.GetString(destArray);
 
         return contents.Split(Environment.NewLine)
-            .Select(this.ParseLine)
+            .Select(_ => this.ParseLine(_, currentTime, maxLogEntryAge))
             .Where(_ => _ != null)
             .ToList()!;
     }
 
-    public LogFileParserResult? ParseLine(string line)
+    public LogFileParserResult? ParseLine(string line, DateTime currentTime, TimeSpan maxAge)
     {
         foreach (var kvp in this.RegexParsers)
         {
@@ -61,7 +61,11 @@ public class LogFileParser : ILogFileParser
 
             if (match.Success)
             {
-                return kvp.Value.Invoke(match);
+                var result = kvp.Value.Invoke(match);
+                //if (result.TimeStamp.Add(maxAge) >= currentTime)
+                {
+                    return result;
+                }
             }
         }
 

@@ -14,29 +14,34 @@ public class LoggerService
     private readonly ILogFileParser logFileParser;
     private readonly ILogFileActionHandler logFileActionHandler;
     private readonly IMessagePoster messagePoster;
+    private readonly AppSettings appSettings;
     private readonly ILogger logger;
+
     public LoggerService(
         IFileChangeSniffer fileChangeSniffer,
         ILogFileParser logFileParser,
         ILogFileActionHandler logFileActionHandler,
         IMessagePoster messagePoster,
+        AppSettings appSettings,
         ILogger<LoggerService> logger)
     {
         this.fileChangeSniffer = fileChangeSniffer;
         this.logFileParser = logFileParser;
         this.logFileActionHandler = logFileActionHandler;
         this.messagePoster = messagePoster;
+        this.appSettings = appSettings;
         this.logger = logger;
     }
 
     public async Task Run(CancellationToken cancellationToken)
     {
+        var fileSnifferTask = this.fileChangeSniffer.Start(cancellationToken);
         while (!cancellationToken.IsCancellationRequested)
         {
             this.logger.LogInformation("Waiting for file sniffer.");
             var changedFile = await this.fileChangeSniffer.WaitForFileChange(cancellationToken);
             this.logger.LogInformation($"Parsing file {changedFile}");
-            var actions = await this.logFileParser.ParseFile(changedFile, cancellationToken);
+            var actions = await this.logFileParser.ParseFile(changedFile, DateTime.UtcNow, this.appSettings.FileOptions.MaxLogAge, cancellationToken);
             this.logger.LogInformation($"Handling {actions.Count} actions");
             foreach(var action in actions)
             {
@@ -56,5 +61,6 @@ public class LoggerService
                 }
             }
         }
+        await fileSnifferTask;
     }
 }

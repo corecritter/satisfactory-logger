@@ -8,6 +8,7 @@ namespace SatisfactoryLogger;
 
 public interface IFileChangeSniffer
 {
+    Task Start(CancellationToken cancellationToken);
     Task<string> WaitForFileChange(CancellationToken cancellationToken);
 }
 
@@ -21,7 +22,7 @@ public class FileChangedSniffer : IFileChangeSniffer
         this.appSettings = appSettings;
     }
 
-    public async Task Run(CancellationToken cancellationToken)
+    public async Task Start(CancellationToken cancellationToken)
     {
         using var watcher = new FileSystemWatcher(appSettings.FileOptions.SatisfactoryLogDirectory);
 

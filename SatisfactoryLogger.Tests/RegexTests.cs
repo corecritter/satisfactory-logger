@@ -10,7 +10,7 @@ namespace SatisfactoryLogger.Tests
         public void Parse_login_username()
         {
             var pattern = @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\]\[\d+\]LogNet: Join succeeded: (\w+)";
-            var match = Regex.Match("[2024.10.14-19.15.28:929][962]LogNet: Join succeeded: RideOfUrLife", pattern);
+            var match = Regex.Match("[2024.10.15-19.15.28:929][962]LogNet: Join succeeded: RideOfUrLife", pattern);
 
             if (match.Success)
             {
