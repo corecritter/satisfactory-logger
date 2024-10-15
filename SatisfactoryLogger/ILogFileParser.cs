@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,6 +17,13 @@ public interface ILogFileParser
 
 public class LogFileParser : ILogFileParser
 {
+    private readonly ILogger logger;
+
+    public LogFileParser(ILogger<LogFileParser> logger)
+    {
+        this.logger = logger;
+    }
+
     private readonly Dictionary<string, Func<Match, LogFileParserResult>> RegexParsers = new Dictionary<string, Func<Match, LogFileParserResult>>
     {
         {
@@ -36,20 +44,28 @@ public class LogFileParser : ILogFileParser
 
     public async Task<List<LogFileParserResult>> ParseFile(string fileName, DateTime currentTime, TimeSpan maxLogEntryAge, CancellationToken cancellationToken)
     {
-        using var stream = new FileStream(fileName, FileMode.Open);
+        try
+        {
+            using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
 
-        var buffer = new byte[Array.MaxLength];
-        var readLength = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+            var buffer = new byte[Array.MaxLength];
+            var readLength = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
 
-        var destArray = new byte[readLength];
-        Array.Copy(buffer, destArray, readLength);
+            var destArray = new byte[readLength];
+            Array.Copy(buffer, destArray, readLength);
 
-        var contents = UTF8Encoding.UTF8.GetString(destArray);
+            var contents = UTF8Encoding.UTF8.GetString(destArray);
 
-        return contents.Split(Environment.NewLine)
-            .Select(_ => this.ParseLine(_, currentTime, maxLogEntryAge))
-            .Where(_ => _ != null)
-            .ToList()!;
+            return contents.Split(Environment.NewLine)
+                .Select(_ => this.ParseLine(_, currentTime, maxLogEntryAge))
+                .Where(_ => _ != null)
+                .ToList()!;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error reading file");
+        }
+        return Enumerable.Empty<LogFileParserResult>().ToList();
     }
 
     public LogFileParserResult? ParseLine(string line, DateTime currentTime, TimeSpan maxAge)
