@@ -45,14 +45,8 @@ public class LogFileActionHandler : ILogFileActionHandler
                 existing = this.loggedInUsers.FirstOrDefault(_ => _.IpAddress == logFileParserResult.IpAddress);
                 if (existing == default)
                 {
-                    this.logger.LogWarning("Ip Address being added without username");
-                    existing = new LoggedInUser
-                    {
-                        IpAddress = logFileParserResult.IpAddress,
-                        LoginTime = logFileParserResult.TimeStamp
-                    };
-                    this.loggedInUsers.Add(existing);
-                    return $"User with IP: {existing.IpAddress} has logged in.";
+                    this.logger.LogWarning($"User with Ip Address {logFileParserResult.IpAddress} not found. Ignoring.");
+                    return default;
                 }
             }
             existing.IpAddress = logFileParserResult.IpAddress;

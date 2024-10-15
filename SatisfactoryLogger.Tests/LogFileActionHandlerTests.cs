@@ -50,7 +50,7 @@ namespace SatisfactoryLogger.Tests
 
             var result = this.handler.HandleAction(action);
 
-            result.ShouldBe($"User with IP: {ip} has logged in.");
+            result.ShouldBeNull();
         }
 
         [Fact]
