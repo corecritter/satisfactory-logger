@@ -27,7 +27,7 @@ public class LogFileParser : ILogFileParser
     private readonly Dictionary<string, Func<Match, LogFileParserResult>> RegexParsers = new Dictionary<string, Func<Match, LogFileParserResult>>
     {
         {
-            @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\]\[\d+\]LogNet: Join succeeded: (\w+)",
+            @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\]\[\d+\]LogNet: Join succeeded: (.+)",
             ParseLoginUserName
         },
         {
