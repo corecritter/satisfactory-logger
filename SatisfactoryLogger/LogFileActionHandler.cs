@@ -11,7 +11,6 @@ public class LogFileActionHandler : ILogFileActionHandler
 {
     private readonly ILogger logger;
     private readonly List<LoggedInUser> loggedInUsers = new List<LoggedInUser>();
-    private LoggedInUser? lastAssignedUserName = default;
 
     public LogFileActionHandler(
         ILogger<LogFileActionHandler> logger)
@@ -27,30 +26,31 @@ public class LogFileActionHandler : ILogFileActionHandler
 
             if (existing == default)
             {
-                existing = new LoggedInUser
+                existing = loggedInUsers.FirstOrDefault(_ => _.Username == default);
+
+                if (existing == default)
                 {
-                    Username = logFileParserResult.Username!
-                };
-                this.loggedInUsers.Add(existing);
+                    existing = new LoggedInUser();
+                    this.loggedInUsers.Add(existing);
+                }
+                existing.Username = logFileParserResult.Username;
                 existing.LoginTime = logFileParserResult.TimeStamp;
-                this.lastAssignedUserName = existing;
                 return $"User: {existing.Username} has logged in.";
             }
         }
         else if (logFileParserResult.Action == LogFileParserResult.Types.Action.LoginIp)
         {
-            var existing = this.lastAssignedUserName;
+            var existing = this.loggedInUsers.FirstOrDefault(_ => _.IpAddress == logFileParserResult.IpAddress);
             if (existing == default)
             {
-                existing = this.loggedInUsers.FirstOrDefault(_ => _.IpAddress == logFileParserResult.IpAddress);
+                existing = this.loggedInUsers.FirstOrDefault(_ => _.IpAddress == default);
                 if (existing == default)
                 {
-                    this.logger.LogWarning($"User with Ip Address {logFileParserResult.IpAddress} not found. Ignoring.");
-                    return default;
+                    existing = new LoggedInUser();
+                    this.loggedInUsers.Add(existing);
                 }
+                existing.IpAddress = logFileParserResult.IpAddress;
             }
-            existing.IpAddress = logFileParserResult.IpAddress;
-            this.lastAssignedUserName = default;
         }
         else
         {
@@ -79,7 +79,7 @@ public class LogFileActionHandler : ILogFileActionHandler
 
     private class LoggedInUser
     {
-        public string Username { get; set; } = null!;
+        public string? Username { get; set; }
         public string? IpAddress { get; set; }
         public DateTime LoginTime { get; set; }
     }
