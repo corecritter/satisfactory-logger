@@ -14,7 +14,12 @@ var sp = new ServiceCollection()
     .AddLogging(_ =>
     {
         _.ClearProviders();
-        _.AddConsole();
+        //_.AddConsole();
+        _.AddSimpleConsole(config =>
+        {
+            config.TimestampFormat = "[MM dd yyyy HH:mm:ss] ";
+            config.UseUtcTimestamp = false;
+        });
     })
     .AddSingleton(appSettings)
     .Build()
