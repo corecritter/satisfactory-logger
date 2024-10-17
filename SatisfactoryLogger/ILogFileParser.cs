@@ -31,7 +31,7 @@ public class LogFileParser : ILogFileParser
             ParseLoginUserName
         },
         {
-            @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\]\[\d+\]LogNet: NotifyAcceptingConnection accepted aggregation: ([\d\.]+):\d+ \(\d+\)",
+            @"\[(.*?)\].*?LogNet: Server accepting post-challenge connection from: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})",
             ParseLoginIpAddress
         },
         {

@@ -24,8 +24,8 @@ namespace SatisfactoryLogger.Tests
         [Fact]
         public void Parse_login_ip()
         {
-            string logMessage = "[2024.10.14-19.21.43:938][129]LogNet: NotifyAcceptingConnection accepted aggregation: 192.168.50.159:58443 (50)";
-            string pattern = @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\]\[\d+\]LogNet: NotifyAcceptingConnection accepted aggregation: ([\d\.]+):\d+ \(\d+\)";
+            string logMessage = "[2024.10.17-17.06.50:210][773]LogNet: Server accepting post-challenge connection from: 99.168.50.159:60798";
+            string pattern = @"\[(.*?)\].*?LogNet: Server accepting post-challenge connection from: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})";
 
             Regex regex = new Regex(pattern);
             Match match = regex.Match(logMessage);
