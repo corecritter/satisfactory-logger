@@ -35,7 +35,7 @@ public class LogFileParser : ILogFileParser
             ParseLoginIpAddress
         },
         {
-            @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\].*RemoteAddr: ([\d\.]+)",
+            @"\[(.*?)\].*?Closing connection.*?RemoteAddr: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})",
             ParseLogoutIpAddress
         }
     };

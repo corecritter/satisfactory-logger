@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -42,8 +43,9 @@ namespace SatisfactoryLogger.Tests
         [Fact]
         public void Parse_logout_ip()
         {
-            string logMessage = "[2024.10.14-19.22.37:955][706]LogNet: UChannel::CleanUp: ChIndex == 0. Closing connection. [UChannel] ChIndex: 0, Closing: 0 [UNetConnection] RemoteAddr: 192.168.50.159:59946, Name: IpConnection_2147444421, Driver: GameNetDriver FGDSIpNetDriver_2147461209, IsServer: YES, PC: BP_PlayerController_C_2147444406, Owner: BP_PlayerController_C_2147444406, UniqueId: Steam:2 (ForeignId=[Type=6 Handle=1 RepData=[7D95790601001001])";
-            string pattern = @"\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}:\d{3})\].*RemoteAddr: ([\d\.]+)";
+            var logMessage = "[2024.10.14-19.22.37:955][706]LogNet: UChannel::CleanUp: ChIndex == 0. Closing connection. [UChannel] ChIndex: 0, Closing: 0 [UNetConnection] RemoteAddr: 192.168.50.159:59946, Name: IpConnection_2147444421, Driver: GameNetDriver FGDSIpNetDriver_2147461209, IsServer: YES, PC: BP_PlayerController_C_2147444406, Owner: BP_PlayerController_C_2147444406, UniqueId: Steam:2 (ForeignId=[Type=6 Handle=1 RepData=[7D95790601001001])";
+            //var logMessage = "[2024.10.17-21.44.53:326][528]LogNet: NotifyAcceptedConnection: Name: Persistent_Level, TimeStamp: 10/17/24 17:44:53, [UNetConnection] RemoteAddr: 192.168.50.159:65515, Name: IpConnection_2147462115, Driver: GameNetDriver FGDSIpNetDriver_2147482241, IsServer: YES, PC: NULL, Owner: NULL, UniqueId: INVALID";
+            var pattern = @"\[(.*?)\].*?Closing connection.*?RemoteAddr: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})";
 
             Regex regex = new Regex(pattern);
             Match match = regex.Match(logMessage);
