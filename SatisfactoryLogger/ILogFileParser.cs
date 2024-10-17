@@ -81,6 +81,7 @@ public class LogFileParser : ILogFileParser
                 var result = kvp.Value.Invoke(match);
                 if (result.TimeStamp.Add(maxAge) >= currentTime)
                 {
+                    result.Message = line;
                     return result;
                 }
             }

@@ -42,9 +42,9 @@ public class LoggerService
             var changedFile = await this.fileChangeSniffer.WaitForFileChange(cancellationToken);
             this.logger.LogInformation($"Parsing file {changedFile}");
             var actions = await this.logFileParser.ParseFile(changedFile, DateTime.UtcNow, this.appSettings.FileOptions.MaxLogAge, cancellationToken);
-            this.logger.LogInformation($"Handling {actions.Count} actions");
             foreach(var action in actions)
             {
+                this.logger.LogInformation($"Handling action for message: {action.Message}");
                 var postMessage = this.logFileActionHandler.HandleAction(action);
 
                 if (postMessage != null)
