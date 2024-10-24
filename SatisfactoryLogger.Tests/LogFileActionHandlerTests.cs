@@ -51,7 +51,8 @@ namespace SatisfactoryLogger.Tests
 
             var result = this.handler.HandleAction(action);
 
-            result.ShouldBeNull();
+            result.ShouldNotBeNull();
+            result.ShouldBe($"User with IP {ip} has logged in");
         }
 
         [Fact]
@@ -76,7 +77,8 @@ namespace SatisfactoryLogger.Tests
 
             var result = this.handler.HandleAction(action);
 
-            result.ShouldBeNull();
+            result.ShouldNotBeNull();
+            result.ShouldBe($"User: {userName} and IP {ip} has logged in.");
         }
 
         [Fact]
@@ -89,9 +91,11 @@ namespace SatisfactoryLogger.Tests
                 IpAddress = ip,
                 TimeStamp = new DateTime(2023, 12, 12, 12, 0, 0, DateTimeKind.Utc)
             };
+            var result = this.handler.HandleAction(action);
+            result.ShouldNotBeNull();
+            result.ShouldBe($"User with IP {ip} has logged in");
 
             var userName = "Cooker";
-            this.handler.HandleAction(action);
             action = new LogFileParserResult
             {
                 Action = LogFileParserResult.Types.Action.LoginUserName,
@@ -99,10 +103,10 @@ namespace SatisfactoryLogger.Tests
                 TimeStamp = new DateTime(2023, 12, 12, 12, 0, 0, DateTimeKind.Utc)
             };
 
-            var result = this.handler.HandleAction(action);
+            result = this.handler.HandleAction(action);
 
             result.ShouldNotBeNull();
-            result.ShouldBe($"User: {userName} has logged in.");
+            result.ShouldBe($"User: {userName} and IP {ip} has logged in.");
         }
 
         [Fact]
