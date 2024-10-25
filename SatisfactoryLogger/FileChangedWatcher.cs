@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SatisfactoryLogger;
 
-namespace SatisfactoryLogger;
-
-public interface IFileChangeSniffer
+public interface IFileChangedWatcher
 {
     Task Start(CancellationToken cancellationToken);
     Task<string> WaitForFileChange(CancellationToken cancellationToken);
 }
 
-public class FileChangedSniffer : IFileChangeSniffer
+public class FileChangedWatcher : IFileChangedWatcher
 {
     private readonly AppSettings appSettings;
     private readonly List<string> changedFiles = new List<string>();
 
-    public FileChangedSniffer(AppSettings appSettings)
+    public FileChangedWatcher(AppSettings appSettings)
     {
         this.appSettings = appSettings;
     }

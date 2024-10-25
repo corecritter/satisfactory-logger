@@ -13,7 +13,7 @@ namespace SatisfactoryLogger
         {
             services.AddSingleton<LoggerService>();
             services.AddTransient<ILogFileParser, LogFileParser>();
-            services.AddSingleton<IFileChangeSniffer, FileChangedSniffer>();
+            services.AddSingleton<IFileChangedWatcher, FileChangedWatcher>();
             services.AddSingleton<ILogFileActionHandler, LogFileActionHandler>();
             services.AddTransient<IMessagePoster, DiscordMessagePoster>();
 

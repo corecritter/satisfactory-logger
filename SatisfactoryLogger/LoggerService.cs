@@ -10,7 +10,7 @@ namespace SatisfactoryLogger;
 
 public class LoggerService
 {
-    private readonly IFileChangeSniffer fileChangeSniffer;
+    private readonly IFileChangedWatcher fileChangeSniffer;
     private readonly ILogFileParser logFileParser;
     private readonly ILogFileActionHandler logFileActionHandler;
     private readonly IMessagePoster messagePoster;
@@ -18,7 +18,7 @@ public class LoggerService
     private readonly ILogger logger;
 
     public LoggerService(
-        IFileChangeSniffer fileChangeSniffer,
+        IFileChangedWatcher fileChangeSniffer,
         ILogFileParser logFileParser,
         ILogFileActionHandler logFileActionHandler,
         IMessagePoster messagePoster,
@@ -35,10 +35,10 @@ public class LoggerService
 
     public async Task Run(CancellationToken cancellationToken)
     {
+        this.logger.LogInformation($"Staring {nameof(LoggerService)}");
         var fileSnifferTask = this.fileChangeSniffer.Start(cancellationToken);
         while (!cancellationToken.IsCancellationRequested)
         {
-            this.logger.LogInformation("Waiting for file sniffer.");
             var changedFile = await this.fileChangeSniffer.WaitForFileChange(cancellationToken);
             this.logger.LogInformation($"Parsing file {changedFile}");
             var actions = await this.logFileParser.ParseFile(changedFile, DateTime.UtcNow, this.appSettings.FileOptions.MaxLogAge, cancellationToken);
