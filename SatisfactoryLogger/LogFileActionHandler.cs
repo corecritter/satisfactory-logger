@@ -76,11 +76,15 @@ public class LogFileActionHandler : ILogFileActionHandler
                 this.loggedInUsers.Remove(existingUser);
             }
 
+            if (!existing.Any()) return default;
+
             var validExisting = existing.FirstOrDefault(_ => _.Username != default);
             if (validExisting != default)
             {
                 return $"User {validExisting.Username} with IP {validExisting.IpAddress} is logging out after {logFileParserResult.TimeStamp - validExisting.LoginTime}";
             }
+
+            return $"User with IP {existing.First().IpAddress} is logging out after {logFileParserResult.TimeStamp - existing.First().LoginTime}";
         }
 
         return default;
