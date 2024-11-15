@@ -31,10 +31,10 @@ public class LogFileActionHandler : ILogFileActionHandler
                 if (existing == default)
                 {
                     existing = new LoggedInUser();
+                    existing.LoginTime = logFileParserResult.TimeStamp;
                     this.loggedInUsers.Add(existing);
                 }
                 existing.Username = logFileParserResult.Username;
-                existing.LoginTime = logFileParserResult.TimeStamp;
                 if (existing.IpAddress != default)
                 {
                     return $"User: {existing.Username} and IP {existing.IpAddress} has logged in.";
@@ -51,6 +51,7 @@ public class LogFileActionHandler : ILogFileActionHandler
                 if (existing == default)
                 {
                     existing = new LoggedInUser();
+                    existing.LoginTime = logFileParserResult.TimeStamp;
                     this.loggedInUsers.Add(existing);
                 }
                 existing.IpAddress = logFileParserResult.IpAddress;
